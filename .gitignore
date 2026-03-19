@@ -5,3 +5,7 @@
 dashboard-server.err.log
 dashboard-server.log
 __pycache__/
+data/
+*.sqlite
+*.sqlite.bak_*
+week_*.json

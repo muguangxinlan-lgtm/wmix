@@ -2,70 +2,78 @@
 
 ## 项目是什么
 
-这是一个离线电商数据看板项目。
+离线电商数据看板项目。本地 Python 脚本读取 SQLite → 生成静态 HTML → 通过 GitHub Pages 发布。
 
-主逻辑：
-- 本地 Python 脚本读取 SQLite
-- 生成静态 HTML
-- 通过 GitHub Pages 发布
+当前仓库已经纳入 `v2`、`v3`、填表工具和导入脚本；数据库文件仍保持本地存放，不提交到 Git。
 
-不是 Web 后端服务，也不是前后端分离项目。
+## 当前状态（2026-03-19）
 
-## 现在的状态
-
-截至 2026-03-19：
-
-- Git 仓库已经初始化
-- 远端仓库已经连接：`muguangxinlan-lgtm/wmix`
-- 代码已经成功推送到 GitHub
-- GitHub Pages 已经配置为从 `main` 分支的 `/ (root)` 发布
-- 发布文件是 `index.html`
-
-如果站点暂时打不开，优先检查 GitHub Pages 是否还在构建。
-
-## 访问地址
-
-- 仓库：`https://github.com/muguangxinlan-lgtm/wmix`
+### 线上版（v2）
+- Git 仓库已连接：`muguangxinlan-lgtm/wmix`
+- GitHub Pages 从 `main` 分支 `/ (root)` 发布
+- 发布文件：`index.html`（由 `build_v2.py` 生成，Chart.js + 暗色5Tab页）
 - 站点：`https://muguangxinlan-lgtm.github.io/wmix/`
 
-## 主要文件说明
+### 本地版（v3）
+- `build_v3.py` → `dashboard_v3.html`：全新设计，ECharts + 明亮单页滚动
+- `build_form.py` → `data_entry.html`：填表工具，填完新一周数据后一键生成新看板
+- v3 尚未发布到 GitHub Pages
 
-- `build_v2.py`
-  主脚本。当前应该优先维护这个文件。
-- `index.html`
-  生成产物，也是 GitHub Pages 发布入口。
-- `publish_github_pages.sh`
-  发布脚本。会重新生成页面并推送；第一次输入 GitHub token 后会保存到 macOS 钥匙串。
+### 两套版本的关系
 
-## 历史背景
+v2 和 v3 完全独立，各自读同一个 SQLite 数据库，互不影响。
+v3 填表工具内嵌了 `dashboard_v3.html` 模板，改看板后需重新跑 `build_form.py`。
 
-这个项目一开始是准备用一台一直开机的 Mac 做本地服务器，对应文件：
-- `serve_dashboard.py`
-- `launch_dashboard_server.sh`
-- `com.wmix.dashboard-server.plist`
+## 文件地图
 
-后来改成 GitHub Pages 方案，所以这些文件现在不是主路径，但可以保留备用。
+```
+/Users/wmix/wmixclaude/         ← Git 仓库（GitHub Pages）
+├── build_v2.py                ← v2 生成脚本
+├── index.html                 ← v2 输出（线上发布）
+├── build_v3.py                ← v3 看板生成脚本
+├── dashboard_v3.html          ← v3 看板输出
+├── build_form.py              ← 填表工具生成脚本
+├── data_entry.html            ← 填表工具输出
+├── import_week.py             ← JSON 导入 SQLite
+├── publish_github_pages.sh
+├── README.md
+└── HANDOFF.md
 
-## 已知问题
+本地数据库：
+- `data/店铺每周数据汇总.sqlite`，或
+- `~/Downloads/店铺每周数据汇总_2026-03-18.sqlite`
+```
 
-- 页面依赖外部 CDN：`https://cdn.jsdelivr.net/.../chart.umd.min.js`
-- 如果访问者网络无法访问 jsDelivr，图表可能无法正常加载
-- 仓库里同时保留了 `dashboard.html` 和 `index.html`，实际发布只用 `index.html`
+## 每周更新方式
 
-## 建议的后续整理
+### 用填表工具（推荐）
+1. 浏览器打开 `/Users/wmix/wmixclaude/data_entry.html`
+2. 填新一周数据 → 公式自动算 → 点"生成看板" → 下载新 HTML
 
-1. 如果不再需要本地 Mac 服务器方案，可以移除：
-   - `serve_dashboard.py`
-   - `launch_dashboard_server.sh`
-   - `com.wmix.dashboard-server.plist`
-2. 如果不再需要旧版页面输出，可以移除 `dashboard.html`
-3. 可以把 Chart.js 改成仓库内本地静态文件，避免依赖外部 CDN
-4. 可以给 `build_v2.py` 增加命令行参数，避免数据库路径写死
+### 用命令行
+```bash
+# 更新 v3 看板（需要先更新 SQLite 数据库）
+python3 /Users/wmix/wmixclaude/build_v3.py
 
-## 下一个 AI/维护者先看什么
+# 更新 v2 线上版
+cd /Users/wmix/wmixclaude
+python3 build_v2.py
+./publish_github_pages.sh
+```
 
-优先阅读：
-1. `README.md`
-2. `HANDOFF.md`
-3. `build_v2.py`
-4. `publish_github_pages.sh`
+## 数据库说明
+
+`店铺每周数据汇总.sqlite`（或 Downloads 下同名快照）：
+- 60周（2025-02-15 ~ 2026-03-09），6平台，3861条记录
+- `structured_data` 表：每条记录 = 某平台某周某指标的数值
+- `platform_weekly_summary` 表：平台周汇总（总成交/退款/净成交/自营/合作/付费/支出）
+- `notes` 表：数据说明
+- 字段 `是否公式` 标记了哪些是手工录入、哪些是公式计算
+
+## 下一个维护者先看什么
+
+1. `README.md` — 整体说明
+2. `HANDOFF.md`（本文件）— 当前状态
+3. `build_v3.py` — 最新看板脚本
+4. `build_form.py` — 填表工具脚本
+5. `import_week.py` — 周数据导入脚本

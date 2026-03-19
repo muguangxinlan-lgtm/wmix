@@ -35,7 +35,7 @@
 - `index.html`
   生成产物，也是 GitHub Pages 发布入口。
 - `publish_github_pages.sh`
-  发布脚本。会重新生成页面并推送。
+  发布脚本。会重新生成页面并推送；第一次输入 GitHub token 后会保存到 macOS 钥匙串。
 
 ## 历史背景
 

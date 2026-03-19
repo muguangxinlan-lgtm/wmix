@@ -1,0 +1,7 @@
+.DS_Store
+.idea/
+.claude/
+*.log
+dashboard-server.err.log
+dashboard-server.log
+__pycache__/

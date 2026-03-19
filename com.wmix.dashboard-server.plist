@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.wmix.dashboard-server</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>/Users/wmix/wmixclaude/launch_dashboard_server.sh</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/wmix/wmixclaude</string>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>KeepAlive</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/wmix/wmixclaude/dashboard-server.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/Users/wmix/wmixclaude/dashboard-server.err.log</string>
+</dict>
+</plist>

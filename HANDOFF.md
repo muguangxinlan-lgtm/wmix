@@ -6,7 +6,7 @@
 
 当前仓库已经纳入 `v2`、`v3`、填表工具和导入脚本；数据库文件仍保持本地存放，不提交到 Git。
 
-## 当前状态（2026-03-19）
+## 当前状态（2026-03-23）
 
 ### 线上版（v2）
 - Git 仓库已连接：`muguangxinlan-lgtm/wmix`
@@ -50,6 +50,16 @@ v3 填表工具内嵌了 `dashboard_v3.html` 模板，改看板后需重新跑 `
 1. 浏览器打开 `/Users/wmix/wmixclaude/data_entry.html`
 2. 填新一周数据 → 公式自动算 → 点"生成看板" → 下载新 HTML
 
+### 用周度 Excel 直接更新
+1. 准备最新的 `店铺每周数据汇总*.xlsx`
+2. 运行：
+```bash
+python3 /Users/wmix/wmixclaude/xlsx_to_week_json.py ~/Downloads/店铺每周数据汇总0323.xlsx
+python3 /Users/wmix/wmixclaude/import_week.py ~/Downloads/week_2026-03-16.json
+python3 /Users/wmix/wmixclaude/build_v3.py
+```
+3. `import_week.py` 会在导入前自动备份旧数据库
+
 ### 用命令行
 ```bash
 # 更新 v3 看板（需要先更新 SQLite 数据库）
@@ -64,11 +74,16 @@ python3 build_v2.py
 ## 数据库说明
 
 `店铺每周数据汇总.sqlite`（或 Downloads 下同名快照）：
-- 60周（2025-02-15 ~ 2026-03-09），6平台，3861条记录
+- 61周（2025-02-15 ~ 2026-03-16），6平台，3940条记录
 - `structured_data` 表：每条记录 = 某平台某周某指标的数值
 - `platform_weekly_summary` 表：平台周汇总（总成交/退款/净成交/自营/合作/付费/支出）
 - `notes` 表：数据说明
 - 字段 `是否公式` 标记了哪些是手工录入、哪些是公式计算
+
+最近一次导入：
+- 源文件：`~/Downloads/店铺每周数据汇总0323.xlsx`
+- 新增周：`2026-03-16 ~ 2026-03-22`
+- 备份：`~/Downloads/店铺每周数据汇总_2026-03-18.sqlite.bak_20260323_145839`
 
 ## 下一个维护者先看什么
 

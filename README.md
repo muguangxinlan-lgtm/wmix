@@ -21,15 +21,23 @@ data_entry.html      .sqlite 文件          dashboard_v3.html
 ## 每周更新流程
 
 ```bash
-# 1. 浏览器打开填表工具，填写新一周数据，点「导出 JSON」
+# 方式 A：浏览器打开填表工具，填写新一周数据，点「导出 JSON」
 open /Users/wmix/wmixclaude/data_entry.html
 
-# 2. 把导出的 JSON 写入数据库
+# 把导出的 JSON 写入数据库
 python3 /Users/wmix/wmixclaude/import_week.py ~/Downloads/week_2026-03-16.json
 
-# 3. 用任意脚本生成看板
+# 方式 B：直接从周度 Excel 提取最新一周 JSON
+python3 /Users/wmix/wmixclaude/xlsx_to_week_json.py ~/Downloads/店铺每周数据汇总0323.xlsx
+
+# 再把生成的 JSON 写入数据库（会自动先备份数据库）
+python3 /Users/wmix/wmixclaude/import_week.py ~/Downloads/week_2026-03-16.json
+
+# 最后用任意脚本生成看板
 python3 /Users/wmix/wmixclaude/build_v3.py
 ```
+
+当前数据库已更新到 `2026-03-16 ~ 2026-03-22`，共 `61` 周、`3940` 条 `structured_data`、`279` 条 `platform_weekly_summary`。
 
 ## 文件清单
 
@@ -39,6 +47,7 @@ python3 /Users/wmix/wmixclaude/build_v3.py
 |------|------|
 | `build_form.py` | 生成填表工具的脚本。读 SQLite 取上周参考值，输出 `data_entry.html` |
 | `data_entry.html` | 填表工具页面。浏览器打开，填数据，导出 JSON |
+| `xlsx_to_week_json.py` | 从 `店铺每周数据汇总*.xlsx` 中提取最新未导入的一周，输出周 JSON |
 | `import_week.py` | 把填表工具导出的 JSON 写入 SQLite。自动备份，有重复检测 |
 
 ### 看板视图（只读数据库，跟填表无关）
@@ -111,4 +120,5 @@ python3 /Users/wmix/wmixclaude/build_form.py    # 重新生成 data_entry.html
 - 推荐把数据库放到仓库外，例如 `~/Downloads/店铺每周数据汇总_2026-03-18.sqlite`
 - 也可以放到仓库内的 `data/店铺每周数据汇总.sqlite` 供本机脚本使用
 - `data/`、`*.sqlite`、备份文件和导出的周 JSON 已加入 `.gitignore`
-- `build_v3.py`、`build_form.py`、`import_week.py` 都支持环境变量 `WMIX_DB_PATH`
+- `import_week.py` 每次导入前都会自动生成一个 `*.bak_YYYYMMDD_HHMMSS` 数据库备份
+- `build_v3.py`、`build_form.py`、`import_week.py`、`xlsx_to_week_json.py` 都支持环境变量 `WMIX_DB_PATH`

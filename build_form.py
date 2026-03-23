@@ -110,7 +110,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
   <div class="export-info">
     <strong>使用流程：</strong>填写数据 → 点「导出 JSON」下载文件 → 运行
     <code>python3 import_week.py 下载的文件.json</code> 写入数据库 →
-    运行任意 <code>build_*.py</code> 生成看板
+    运行 <code>python3 build_v3.py</code> 更新新版看板 →
+    如需更新线上旧版，再运行 <code>python3 build_v2.py</code> 和 <code>./publish_github_pages.sh</code>
   </div>
 
   <div class="date-section">
@@ -509,7 +510,7 @@ function loadPrevWeek() {
 
 function showToast(msg) {
   const t=document.getElementById('toast'); t.textContent=msg;
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500);
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),4500);
 }
 
 // ===== EXPORT JSON (写入数据库用) =====
@@ -577,7 +578,7 @@ function exportJSON() {
   a.download = 'week_'+startDate+'.json';
   a.click();
   URL.revokeObjectURL(url);
-  showToast('已导出 week_'+startDate+'.json');
+  showToast('已导出 week_'+startDate+'.json；下一步：先运行 python3 import_week.py 导入数据库，再运行 build_v3.py；如需更新线上旧版，再运行 build_v2.py 和 publish_github_pages.sh');
 }
 
 // ===== INIT =====
